@@ -33,8 +33,8 @@ Requirements: Docker Desktop (or Docker Engine with Compose v2) with about **6 G
 and Python 3.10+ for `logq`.
 
 ```bash
-git clone https://github.com/KushGupta3808/cassandra-log-hub.git
-cd cassandra-log-hub
+git clone https://github.com/KushGupta3808/cassandra-Log_Hub.git
+cd cassandra-Log_Hub
 docker compose up -d
 ```
 
