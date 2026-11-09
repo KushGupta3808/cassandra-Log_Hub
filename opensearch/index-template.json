@@ -1,0 +1,25 @@
+{
+  "index_patterns": ["cassandra-logs-*"],
+  "priority": 100,
+  "template": {
+    "settings": {
+      "number_of_shards": 1,
+      "number_of_replicas": 0,
+      "refresh_interval": "2s"
+    },
+    "mappings": {
+      "dynamic": true,
+      "properties": {
+        "@timestamp": { "type": "date" },
+        "level":      { "type": "keyword" },
+        "node":       { "type": "keyword" },
+        "cluster":    { "type": "keyword" },
+        "thread":     { "type": "keyword" },
+        "source":     { "type": "keyword" },
+        "line":       { "type": "integer" },
+        "message":    { "type": "text" },
+        "log":        { "type": "text" }
+      }
+    }
+  }
+}

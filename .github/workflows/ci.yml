@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    name: Lint and unit tests (Python ${{ matrix.python }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ["3.10", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: pip install -e ".[dev]"
+      - run: ruff check .
+      - run: pytest -v
+
+  config:
+    name: Validate Docker Compose and Fluent Bit config
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Docker Compose file is valid
+        run: docker compose config --quiet
+      - name: Fluent Bit config parses
+        run: |
+          docker run --rm \
+            -v "$PWD/fluent-bit:/fluent-bit/etc:ro" \
+            fluent/fluent-bit:3.1 \
+            /fluent-bit/bin/fluent-bit -c /fluent-bit/etc/fluent-bit.conf --dry-run
+      - name: Init scripts are valid shell
+        run: |
+          sh -n opensearch/opensearch-init.sh
+          sh -n opensearch/dashboards-init.sh
+      - name: OpenSearch JSON files are valid
+        run: |
+          python -m json.tool opensearch/index-template.json > /dev/null
+          python -m json.tool opensearch/retention-policy.json > /dev/null
